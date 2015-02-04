@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Hacking Jenkins</title>
+
+        <meta name="description" content="A workshop on advanced Jenkins features">
+        <meta name="author" content="Miroslav Cupak">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+        <!-- Code syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <img  style=" background: none; border: none; box-shadow: none; margin:0;" src="img/jenkins.png" height="280"/>
+                    <h1>Hacking Jenkins</h1>
+                    <p>
+                        <a href="https://twitter.com/mirocupak">Miro Cupak</a> (<a href="http://dnastack.com">DNAstack</a>),
+                        <a href="https://github.com/olivergondza">Oliver Gondza</a> (<a href="http://www.redhat.com/">Red Hat</a>)
+                    </p>
+                    <p>
+                        <small>07/02/2015</small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Today's topics</h2>
+                    <ol>
+                        <li><a href="#/2">REST API</a></li>
+                        <li><a href="#/3">CLI</a></li>
+                        <li><a href="#/4">Scripting</a></li>
+                        <li><a href="#/8">Groovy jobs</a></li>
+                    </ol>
+                </section>
+
+                <section>
+                    <small>Section 1</small>
+                    <h2>REST API</h2>
+                </section>
+
+                <section>
+                    <small>Section 2</small>
+                    <h2>Command-line interface</h2>
+                </section>
+
+                <section>
+                    <small>Section 3</small>
+                    <h2>Scripting</h2>
+                </section>
+
+                <section>
+                    <h2>Jenkins Script Console</h2>
+                    <ul>
+                        <li>run arbitrary scripts on master and slave nodes</li>
+                        <li>useful for users, developers, <b>administrators</b></li>
+                        <li >UI: <a href="http://localhost:8080/script">Manage Jenkins > Script Console</a></li>
+                        <li class="fragment">CLI: <pre><code data-trim contenteditable>java -jar jenkins-cli.jar -s http://jenkins/ groovysh</code></pre></li>
+                        <li class="fragment">HTTP POST: <pre><code data-trim contenteditable>curl -d "script=myscript.groovy" http://jenkins/script</code></pre></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section>
+                        <small>Task 3.1</small>
+                        <h2>Executing scripts on slaves</h2>
+                    </section>
+                    <section>
+                        <small>Task 3.1</small>
+                        <h3>Background</h3>
+                        <p>
+                            Our build is failing upon initialization. We suspect the machine running the slave does not have enough free memory.
+                        </p>
+                    </section>
+                    <section>
+                        <small>Task 3.1</small>
+                        <div>
+                            <h3>Goal</h3>
+                            <p>
+                                Use example_slave's script console to find out how much free RAM it has.
+                            </p>
+                        </div>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <ul>
+                                <li>
+                                    slave's script console is located at <a href="http://localhost:8080/computer/example_slave/script">http://localhost:8080/computer/example_slave/script</a>
+                                </li>
+                                <li>
+                                    read the script console help
+                                </li>
+                                <li>
+                                    <code data-trim contenteditable>free</code> shell command should do the trick - can you run it from Groovy?
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 3.1</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+println "free -m".execute().text
+</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <small>Task 3.2</small>
+                        <h2>Executing scripts on master</h2>
+                    </section>
+                    <section>
+                        <small>Task 3.2</small>
+                        <h3>Background</h3>
+                        <p>
+                            Labels are basically the only way to distinguish slaves in Jenkins. A good idea is to use feature labels, i.e. tag slaves according to what they provide (e.g. "rhel7 32b mem16g").
+                        </p>
+                    </section>
+                    <section>
+                        <small>Task 3.2</small>
+                        <div>
+                            <h3>Goal</h3>
+                            <p>
+                                Use the script console to mark all Linux slaves as development machines, i.e. add "dev" label to all slaves with "linux" label.
+                            </p>
+                        </div>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <ul>
+                                <li>
+                                    a good place to start is the root of the Jenkins tree - <code data-trim contenteditable>Jenkins.instance</code>
+                                </li>
+                                <li>
+                                    look at <a href="http://javadoc.jenkins-ci.org/jenkins/model/Jenkins.html">Javadoc</a> of <code data-trim contenteditable>jenkins.model.Jenkins</code> to find out how to obtain the list of slaves
+                                </li>
+                                <li>
+                                    slave labels are stored as a single space-delimited string
+                                </li>
+                                <li>
+                                    don't forget to persist your changes
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 3.2</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+def j = Jenkins.instance
+
+for (slave in j.slaves) {
+    label = slave.getLabelString()
+    
+    if (label.contains("linux")) {
+        label += " dev"
+        slave.setLabelString(label)
+    }
+}
+
+j.save()
+</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <small>Section 4</small>
+                    <h2>Groovy jobs</h2>
+                </section>
+
+                <section>
+                    <h2>Groovy jobs</h2>
+                    <ul>
+                        <li>
+                            freestyle projects with a Groovy build step
+                        </li>
+                        <li>
+                            provided by <a href="https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin">Groovy plugin</a>
+                        </li>
+                        <li>
+                            2 types of build steps:
+                            <ul>
+                                <li>
+                                    groovy scripts
+                                    <ul>
+                                        <li>
+                                            run in the slave's JVM
+                                        </li>
+                                        <li>
+                                            like running <code data-trim contenteditable>groovy</code> command with a script
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    system groovy scripts
+                                    <ul>
+                                        <li>
+                                            run inside master's JVM
+                                        </li>
+                                        <li>
+                                            have access to all the internal objects of Jenkins and can alter its state
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            similar to script console
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section>
+                        <small>Task 4</small>
+                        <h2>Creating system jobs</h2>
+                    </section>
+                    <section>
+                        <h3>Background</h3>
+                        <p>
+                            We're running a small Jenkins instance with a small number of slaves. Occasionally, slaves crash or need to undergo maintenance. We want to make sure that we have at least one online slave at any given time.
+                        </p>
+                    </section>
+                    <section>
+                        <small>Task 4</small>
+                        <div>
+                            <h3>Goal</h3>
+                            <p>
+                                Create a job monitoring the number of active slaves. The job should run on master every hour and send an email to you whenever there are no online slaves.
+                            </p>
+                        </div>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <ul>
+                                <li>
+                                    see <a href="http://javadoc.jenkins-ci.org/jenkins/model/Jenkins.html">Javadoc</a> of <code data-trim contenteditable>hudson.model.Computer</code>
+                                </li>
+                                <li>
+                                    use Mailer plugin to send the notifications
+                                </li>
+                                <li>
+                                    unlike the script console, jobs don't do any automagic imports - this should do the trick:
+                                    <pre><code data-trim contenteditable>
+import jenkins.model.*
+import hudson.model.*
+</code></pre>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 4</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+import jenkins.model.*
+import hudson.model.*
+
+def online = 0
+for(Computer computer : Jenkins.instance.computers){
+  if(computer.isOnline()){
+    online++
+  }
+}
+
+println online
+return !(online<1)
+</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>Thank you</h1>
+                    <h2>Questions?</h2>
+                </section>
+
+                <section>
+                    <section>
+                        <small>Bonus task</small>
+                        <h2>Executing scripts on master #2</h2>
+                    </section>
+                    <section>
+                        <small>Extra task</small>
+                        <h3>Background</h3>
+                        <p>
+                            Functional tests on our project were run by Jenkins nightly for about a year. All the builds were stored and now occupy too much space. We want to delete the oldest builds, but don't want to do so manually one by one through the UI.
+                        </p>
+                    </section>
+                    <section>
+                        <small>Bonus task</small>
+                        <div>
+                            <h3>Goal</h3>
+                            <p>
+                                Use the script console to remove builds 2-4 from the "example_job".
+                            </p>
+                        </div>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <ul>
+                                <li>
+                                    you can obtain a job directly from <code data-trim contenteditable>Jenkins.instance</code>
+                                </li>
+                                <li>
+                                    <code data-trim contenteditable>hudson.model.Fingerprint.RangeSet</code>  might be useful
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Bonus task</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+import hudson.model.Fingerprint.RangeSet
+
+def job = Jenkins.instance.getItem("test");
+def range = RangeSet.fromString("1-2", true);
+job.getBuilds(range).each { it.delete() }
+</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>Thank you</h1>
+                    <h2>Questions?</h2>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+
+            // Full list of configuration options available at:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+                // Optional reveal.js plugins
+                dependencies: [
+                    {src: 'lib/js/classList.js', condition: function () {
+                            return !document.body.classList;
+                        }},
+                    {src: 'plugin/markdown/marked.js', condition: function () {
+                            return !!document.querySelector('[data-markdown]');
+                        }},
+                    {src: 'plugin/markdown/markdown.js', condition: function () {
+                            return !!document.querySelector('[data-markdown]');
+                        }},
+                    {src: 'plugin/highlight/highlight.js', async: true, condition: function () {
+                            return !!document.querySelector('pre code');
+                        }, callback: function () {
+                            hljs.initHighlightingOnLoad();
+                        }},
+                    {src: 'plugin/zoom-js/zoom.js', async: true},
+                    {src: 'plugin/notes/notes.js', async: true}
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
