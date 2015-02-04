@@ -66,10 +66,131 @@
                     <small>Section 1</small>
                     <h2>REST API</h2>
                 </section>
+                <section>
+                    <h2>Jenkins Exported API</h2>
+                    <ul>
+                        <li>Jenkins data exposed in machine readable format</li>
+                        <li>available on most Jenkins URLs</li>
+                        <li>support for json, xml and python</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Jenkins REST API</h2>
+                    <ul>
+                        <li>numerous endpoints to interact with Jenkins</li>
+                        <li>configuration exposed via config.xml endpoint</li>
+                    </ul>
+                </section>
+                <section>
+                    <section>
+                        <small>Task 1.1</small>
+                        <h2>Trigger actions in Jenkins</h2>
+                    </section>
+                    <section>
+                        <small>Task 1.1</small>
+                        <h3>Goal</h3>
+                        <p>Use REST API to trigger build using <code data-trim contenteditable>curl</code></p>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <li>Endpoint is <a href="http://localhost:8080/job/example_job/build">$JENKINS_URL/job/$JOB_NAME/build</a></li>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 1.1</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>curl -v -X POST http://localhost:8080/job/example_job/build</code></pre>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <small>Task 1.2</small>
+                        <h2>Manipulate configuration using REST API</h2>
+                    </section>
+                    <section>
+                        <small>Task 1.2</small>
+                        <h3>Goal</h3>
+                        <p>Update number of executors on given node via REST API</p>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <li>Fetch config.xml, modify by hand and send it back</li>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 1.2</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+curl http://localhost:8080/computer/example_slave/config.xml > example_slave.xml
+curl -X POST http://localhost:8080/computer/example_slave/config.xml -d @example_slave.xml
+                        </code></pre>
+                    </section>
+                </section>
 
                 <section>
                     <small>Section 2</small>
                     <h2>Command-line interface</h2>
+                </section>
+                <section>
+                    <h2>Jenkins CLI</h2>
+                    <ul>
+                        <li>run predefined commands from console</li>
+                        <li><a href="http://localhost:8080/cli">Manage Jenkins > Jenkins CLI</a></li>
+                        <pre><code data-trim contenteditable>java -jar jenkins-cli.jar -s $JENKINS_URL help</code></pre>
+                    </ul>
+                </section>
+                <section>
+                    <section>
+                        <small>Task 2.1</small>
+                        <h2>Using CLI commands</h2>
+                    </section>
+                    <section>
+                        <small>Task 2.1</small>
+                        <h3>Background</h3>
+                        <p>Jenkins master does not respond through UI. It need to be shut down before whole machine can be restarted.</p>
+                    </section>
+                    <section>
+                        <small>Task 2.1</small>
+                        <h3>Goal</h3>
+                        <p>Use Jenkins CLI to safely shutdown master</p>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <li>Have a look at <code data-trim contenteditable>safe-shutdown</code> command</li>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 2.1</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>java -jar jenkins-cli.jar -s http://localhost:8080 safe-shutdown</code></pre>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <small>Task 2.2</small>
+                        <h2>Using CLI to manipulate configuration</h2>
+                    </section>
+                    <section>
+                        <small>Task 2.2</small>
+                        <h3>Goal</h3>
+                        <p>Create copy of existing node using nothing but Jenkins CLI.</p>
+                        <div class="fragment">
+                            <h3>Hints</h3>
+                            <ul>
+                                <li>Fetch config.xml and use it to create new node.</li>
+                            </ul>
+                        </div>
+                        <div class="fragment">
+                            <ul>
+                                <li>Commands <code data-trim contenteditable>get-node</code> and <code data-trim contenteditable>create-node</code>.</li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
+                        <small>Task 2.2</small>
+                        <h3>Solution</h3>
+                        <pre><code data-trim contenteditable>
+java -jar jenkins-cli.jar -s http://localhost:8080 get-node example_slave > example_slave.xml
+java -jar jenkins-cli.jar -s http://localhost:8080 create-node new_slave &lt; example_slave.xml
+                        </code></pre>
+                    </section>
                 </section>
 
                 <section>
@@ -178,7 +299,7 @@ def j = Jenkins.instance
 
 for (slave in j.slaves) {
     label = slave.getLabelString()
-    
+
     if (label.contains("linux")) {
         label += " dev"
         slave.setLabelString(label)
