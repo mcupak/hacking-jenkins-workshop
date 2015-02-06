@@ -55,13 +55,22 @@
                 <section>
                     <h2>Today's topics</h2>
                     <ol>
-                        <li><a href="#/2">REST API</a></li>
-                        <li><a href="#/3">CLI</a></li>
-                        <li><a href="#/4">Scripting</a></li>
-                        <li><a href="#/8">Groovy&nbsp;jobs</a></li>
+                        <li><a href="#/3">REST API</a></li>
+                        <li><a href="#/8">CLI</a></li>
+                        <li><a href="#/12">Scripting</a></li>
+                        <li><a href="#/16">Groovy&nbsp;jobs</a></li>
                     </ol>
                 </section>
 
+                <section>
+                    <h2>Environment Setup</h2>
+                        <pre><code data-trim contenteditable>
+wget http://www.fi.muni.cz/~xcupak/download/hacking-jenkins-offline.zip # or copy from USB keys
+unzip hacking-jenkins-offline.zip
+cd hacking-jenkins-offline
+./start.sh # Jenkins should be available a http://localhost:8080/
+                        </code></pre>
+                </section>
                 <section>
                     <small>Section 1</small>
                     <h2>REST API</h2>
@@ -89,10 +98,13 @@
                     <section>
                         <small>Task 1.1</small>
                         <h3>Goal</h3>
-                        <p>Use REST API to trigger build using <code data-trim contenteditable>curl</code></p>
+                        <p>Use REST API to trigger build using <code data-trim contenteditable>curl</code>.</p>
                         <div class="fragment">
                             <h3>Hints</h3>
-                            <li>Endpoint is <a href="http://localhost:8080/job/example_job/build">$JENKINS_URL/job/$JOB_NAME/build</a></li>
+                            <ul>
+                                <li>endpoint is <a href="http://localhost:8080/job/example_job/build">$JENKINS_URL/job/$JOB_NAME/build</a></li>
+                            </ul>
+
                         </div>
                     </section>
                     <section>
@@ -109,10 +121,12 @@
                     <section>
                         <small>Task 1.2</small>
                         <h3>Goal</h3>
-                        <p>Update number of executors on given node via REST API</p>
+                        <p>Update number of executors on given node via REST API.</p>
                         <div class="fragment">
                             <h3>Hints</h3>
-                            <li>Fetch config.xml, modify by hand and send it back</li>
+                            <ul>
+                                <li>fetch config.xml, modify by hand and send it back</li>
+                            </ul>
                         </div>
                     </section>
                     <section>
@@ -134,8 +148,8 @@ curl -X POST http://localhost:8080/computer/example_slave/config.xml -d @example
                     <h2>Jenkins CLI</h2>
                     <ul>
                         <li>run predefined commands from console</li>
-                        <li><a href="http://localhost:8080/cli">Manage Jenkins > Jenkins CLI</a></li>
-                        <pre><code data-trim contenteditable>java -jar jenkins-cli.jar -s $JENKINS_URL help</code></pre>
+                        <li><a href="http://localhost:8080/cli">Manage Jenkins > Jenkins CLI</a>
+                            <pre><code data-trim contenteditable>java -jar jenkins-cli.jar -s $JENKINS_URL help</code></pre></li>
                     </ul>
                 </section>
                 <section>
@@ -146,15 +160,17 @@ curl -X POST http://localhost:8080/computer/example_slave/config.xml -d @example
                     <section>
                         <small>Task 2.1</small>
                         <h3>Background</h3>
-                        <p>Jenkins master does not respond through UI. It need to be shut down before whole machine can be restarted.</p>
+                        <p>Jenkins master does not respond through UI. It needs to be shut down before whole machine can be restarted.</p>
                     </section>
                     <section>
                         <small>Task 2.1</small>
                         <h3>Goal</h3>
-                        <p>Use Jenkins CLI to safely shutdown master</p>
+                        <p>Use Jenkins CLI to safely shutdown master.</p>
                         <div class="fragment">
                             <h3>Hints</h3>
-                            <li>Have a look at <code data-trim contenteditable>safe-shutdown</code> command</li>
+                            <ul>
+                                <li>have a look at <code data-trim contenteditable>safe-shutdown</code> command</li>
+                            </ul>
                         </div>
                     </section>
                     <section>
@@ -468,8 +484,11 @@ job.getBuilds(range).each { it.delete() }
                 </section>
 
                 <section>
-                    <h1>Thank you</h1>
-                    <h2>Questions?</h2>
+                    <h1>Thank you.</h1>
+                    <p>
+                        <small>Feedback: <a href="http://devconf.cz/f/152">http://devconf.cz/f/152</a>.</small><br/>
+                        <small>Slides: <a href="http://mcupak.github.io/hacking-jenkins-workshop/">http://mcupak.github.io/hacking-jenkins-workshop/</a>.</small>
+                    </p>
                 </section>
             </div>
         </div>
