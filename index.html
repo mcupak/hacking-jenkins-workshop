@@ -64,7 +64,7 @@
 
                 <section>
                     <h2>Environment Setup</h2>
-                        <pre><code data-trim contenteditable>
+                    <pre><code data-trim contenteditable>
 wget http://www.fi.muni.cz/~xcupak/download/hacking-jenkins-offline.zip # or copy from USB keys
 unzip hacking-jenkins-offline.zip
 cd hacking-jenkins-offline
@@ -312,15 +312,8 @@ println "free -m".execute().text
                         <small>Task 3.2</small>
                         <h3>Solution</h3>
                         <pre><code data-trim contenteditable>
-def j = Jenkins.instance
-
-for (slave in j.slaves) {
-    label = slave.getLabelString()
-
-    if (label.contains("linux")) {
-        label += " dev"
-        slave.setLabelString(label)
-    }
+Jenkins.instance.getLabel("linux").nodes.each {
+  it.labelString += " dev"
 }
 
 j.save()
@@ -421,7 +414,7 @@ import jenkins.model.*
 import hudson.model.*
 
 def online = 0
-for(computer : Jenkins.instance.computers){
+for(computer in Jenkins.instance.computers){
   if(computer.isOnline()){
     online++
   }
