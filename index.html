@@ -421,13 +421,12 @@ import jenkins.model.*
 import hudson.model.*
 
 def online = 0
-for(Computer computer : Jenkins.instance.computers){
+for(computer : Jenkins.instance.computers){
   if(computer.isOnline()){
     online++
   }
 }
 
-println online
 return !(online<1)
 </code></pre>
                     </section>
