@@ -424,56 +424,56 @@ return !(online<1)
 </code></pre>
                     </section>
                 </section>
-
-                <section>
-                    <h1>Thank you</h1>
-                    <h2>Questions?</h2>
-                </section>
-
-                <section>
-                    <section>
-                        <small>Bonus task</small>
-                        <h2>Executing scripts on master #2</h2>
-                    </section>
-                    <section>
-                        <small>Extra task</small>
-                        <h3>Background</h3>
-                        <p>
-                            Functional tests on our project were run by Jenkins nightly for about a year. All the builds were stored and now occupy too much space. We want to delete the oldest builds, but don't want to do so manually one by one through the UI.
-                        </p>
-                    </section>
-                    <section>
-                        <small>Bonus task</small>
-                        <div>
-                            <h3>Goal</h3>
-                            <p>
-                                Use the script console to remove builds 2-4 from the "example_job".
-                            </p>
-                        </div>
-                        <div class="fragment">
-                            <h3>Hints</h3>
-                            <ul>
-                                <li>
-                                    you can obtain a job directly from <code data-trim contenteditable>Jenkins.instance</code>
-                                </li>
-                                <li>
-                                    <code data-trim contenteditable>hudson.model.Fingerprint.RangeSet</code>  might be useful
-                                </li>
-                            </ul>
-                        </div>
-                    </section>
-                    <section>
-                        <small>Bonus task</small>
-                        <h3>Solution</h3>
-                        <pre><code data-trim contenteditable>
-import hudson.model.Fingerprint.RangeSet
-
-def job = Jenkins.instance.getItem("test");
-def range = RangeSet.fromString("1-2", true);
-job.getBuilds(range).each { it.delete() }
-</code></pre>
-                    </section>
-                </section>
+                <!--
+                                <section>
+                                    <h1>Thank you</h1>
+                                    <h2>Questions?</h2>
+                                </section>
+                
+                                <section>
+                                    <section>
+                                        <small>Bonus task</small>
+                                        <h2>Executing scripts on master #2</h2>
+                                    </section>
+                                    <section>
+                                        <small>Extra task</small>
+                                        <h3>Background</h3>
+                                        <p>
+                                            Functional tests on our project were run by Jenkins nightly for about a year. All the builds were stored and now occupy too much space. We want to delete the oldest builds, but don't want to do so manually one by one through the UI.
+                                        </p>
+                                    </section>
+                                    <section>
+                                        <small>Bonus task</small>
+                                        <div>
+                                            <h3>Goal</h3>
+                                            <p>
+                                                Use the script console to remove builds 2-4 from the "example_job".
+                                            </p>
+                                        </div>
+                                        <div class="fragment">
+                                            <h3>Hints</h3>
+                                            <ul>
+                                                <li>
+                                                    you can obtain a job directly from <code data-trim contenteditable>Jenkins.instance</code>
+                                                </li>
+                                                <li>
+                                                    <code data-trim contenteditable>hudson.model.Fingerprint.RangeSet</code>  might be useful
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </section>
+                                    <section>
+                                        <small>Bonus task</small>
+                                        <h3>Solution</h3>
+                                        <pre><code data-trim contenteditable>
+                import hudson.model.Fingerprint.RangeSet
+                
+                def job = Jenkins.instance.getItem("test");
+                def range = RangeSet.fromString("1-2", true);
+                job.getBuilds(range).each { it.delete() }
+                </code></pre>
+                                    </section>
+                                </section>-->
 
                 <section>
                     <h1>Thank you.</h1>
